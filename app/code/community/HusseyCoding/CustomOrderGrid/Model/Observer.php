@@ -52,26 +52,26 @@ class HusseyCoding_CustomOrderGrid_Model_Observer extends Varien_Event_Observer
             endif;
         endif;
     }
-    
+
     public function adminhtmlSalesOrderGridCollectionLoadBefore($observer)
     {
         if ($this->_isEnabled()):
             $selected = Mage::getStoreConfig('customordergrid/configure/columnsorder');
             $selected = isset($selected) && $selected ? explode(',', $selected) : false;
-            
+
             $select = $observer->getOrderGridCollection()->getSelect();
             $resource = Mage::getSingleton('core/resource');
-            
+
             $select
                 ->join(
                     array('order' => $resource->getTableName('sales/order')),
                     'main_table.entity_id = order.entity_id',
-                    array('is_virtual', 'shipping_method', 'coupon_code', 'customer_email', 'base_shipping_amount', 'shipping_amount', 'base_subtotal', 'subtotal', 'base_tax_amount', 'tax_amount', 'customer_is_guest', 'total_qty_ordered', 'base_discount_amount', 'total_item_count', 'customer_group_id')
+                    array('is_virtual', 'shipping_method', 'shipping_description', 'coupon_code', 'customer_email', 'base_shipping_amount', 'shipping_amount', 'base_subtotal', 'subtotal', 'base_tax_amount', 'tax_amount', 'customer_is_guest', 'total_qty_ordered', 'base_discount_amount', 'total_item_count', 'customer_group_id')
                 );
 
             $billing = array('billing_company', 'billing_postcode', 'billing_region', 'billing_country');
             $shipping = array('shipping_company', 'shipping_postcode', 'shipping_region', 'shipping_country');
-            
+
             if (array_intersect($billing, $selected)):
                 $select->join(
                     array('billing' => $resource->getTableName('sales/order_address')),
@@ -79,7 +79,7 @@ class HusseyCoding_CustomOrderGrid_Model_Observer extends Varien_Event_Observer
                     array('billing_company' => 'company', 'billing_postcode' => 'postcode', 'billing_region' => 'region', 'billing_country' => 'country_id')
                 );
             endif;
-            
+
             if (array_intersect($shipping, $selected)):
                 $select->joinLeft(
                     array('shipping' => $resource->getTableName('sales/order_address')),
@@ -87,7 +87,7 @@ class HusseyCoding_CustomOrderGrid_Model_Observer extends Varien_Event_Observer
                     array('shipping_company' => 'company', 'shipping_postcode' => 'postcode', 'shipping_region' => 'region', 'shipping_country' => 'country_id')
                 );
             endif;
-            
+
             if (in_array('method', $selected) || in_array('cc_type', $selected)):
                 $select->join(
                     array('payment_method' => $resource->getTableName('sales/order_payment')),
@@ -95,7 +95,7 @@ class HusseyCoding_CustomOrderGrid_Model_Observer extends Varien_Event_Observer
                     array('method', 'cc_type')
                 );
             endif;
-            
+
             if (in_array('sku', $selected) || in_array('name', $selected)):
                 $select->joinLeft(
                     array('items' => $resource->getTableName('sales/order_item')),
@@ -234,6 +234,14 @@ class HusseyCoding_CustomOrderGrid_Model_Observer extends Varien_Event_Observer
                     'width' => $width,
                     'options' => Mage::helper('customordergrid')->shippingMethods()
                 ), 'real_order_id');
+                break;
+            case 'shipping_description':
+                    $block->addColumnAfter('shipping_description', array(
+                        'header' => Mage::helper('sales')->__('Shipping Description'),
+                        'index' => 'shipping_description',
+                        'type' => 'text',
+                        'width' => $width,
+                    ), 'real_order_id');
                 break;
             case 'coupon_code':
                 $block->addColumnAfter('coupon_code', array(
@@ -444,7 +452,7 @@ class HusseyCoding_CustomOrderGrid_Model_Observer extends Varien_Event_Observer
                 break;
         endswitch;
     }
-    
+
     private function _isEnabled()
     {
         return (bool) Mage::getStoreConfig('customordergrid/configure/enabled');

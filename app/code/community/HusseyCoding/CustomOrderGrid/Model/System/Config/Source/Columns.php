@@ -12,6 +12,7 @@ class HusseyCoding_CustomOrderGrid_Model_System_Config_Source_Columns
                     array('value' => 'updated_at', 'label' => Mage::helper('adminhtml')->__('Order Modified')),
                     array('value' => 'status', 'label' => Mage::helper('adminhtml')->__('Status')),
                     array('value' => 'shipping_method', 'label' => Mage::helper('adminhtml')->__('Shipping Method')),
+                    array('value' => 'shipping_description', 'label' => Mage::helper('adminhtml')->__('Shipping Description')),
                     array('value' => 'tracking_number', 'label' => Mage::helper('adminhtml')->__('Tracking Number')),
                     array('value' => 'order_currency_code', 'label' => Mage::helper('adminhtml')->__('Currency')),
                     array('value' => 'method', 'label' => Mage::helper('adminhtml')->__('Payment Method')),
